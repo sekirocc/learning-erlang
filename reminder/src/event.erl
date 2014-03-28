@@ -1,11 +1,12 @@
 -module (event).
--compile (export_all).
+-compile ([export_all]).
 
 -record (state, {server, name="", to_go=[]}).
 
 normalize(N) ->
   Limit = 49*24*3600,
   [N rem Limit | lists:duplicate(N div Limit, Limit)].
+
 
 time_to_go(DateTime={{_,_,_}, {_,_,_}}) ->
   Now = calendar:local_time(),
@@ -14,8 +15,9 @@ time_to_go(DateTime={{_,_,_}, {_,_,_}}) ->
   Secs = if ToGo >= 0 -> ToGo;
             ToGo < 0 -> 0
          end,
-  normalize(Secs).
+  normalize(Secs);
 
+time_to_go(Secs) -> Secs.
 
 loop(S=#state{server=Server, to_go=[T|Next]}) ->
   receive
